@@ -20,8 +20,8 @@ var proxy = require('proxy-middleware');
 var url = require('url');
 // app.use('/images', proxy(url.parse('../WS/images')));
 // app.use('/img', proxy(url.parse('../WS/img')));
-app.use('/images', proxy(url.parse('../WS/public/images')));
 
+app.use('/static', express.static(path.join(__dirname, 'static')));
 app.get('*', function(req, res) {
 	res.sendFile(path.join(__dirname, 'static', 'index.html'));
 });

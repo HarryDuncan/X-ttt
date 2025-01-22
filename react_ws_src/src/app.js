@@ -1,7 +1,7 @@
 import React from 'react'
 import app from 'ampersand-app'
 import { render } from 'react-dom'
-import { Router, Route, browserHistory , Switch } from 'react-router'
+import { Router, Route, browserHistory , Switch ,Redirect} from 'react-router'
 import { createBrowserHistory} from 'history'
 import ga from 'react-ga'
 
@@ -29,7 +29,7 @@ let renderSite = function (history) {
 <Router history={history}>
 			<Main>
 			  <Switch>
-				
+			  <Route exact path="/" render={() => <Redirect to="/ttt" />} />
 				<Route path="/pg/:page" component={Txt_page} />
 				<Route path="/user-profile" component={UserProfile} />
 				<Route path="/ttt" component={Ttt} />
