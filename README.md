@@ -54,3 +54,6 @@ https://x-ttt.herokuapp.com/ws_conf.xml
 6. Error handling on play against humans.
     - If connecting to another human isn't working/connecting the status message just stays connecting. I have changed it to try 5 times then if it fails 
     an error message will be displayed
+
+7. Fixed image routing.
+    - The header and footer images were not displaying correctly when I downloaded this project. I changed the configs and the urls to the image files
