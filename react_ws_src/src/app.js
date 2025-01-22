@@ -1,8 +1,8 @@
 import React from 'react'
 import app from 'ampersand-app'
 import { render } from 'react-dom'
-import { Router, Route, Redirect, IndexRoute, browserHistory  } from 'react-router'
-import { createHistory, useBasename } from 'history'
+import { Router, Route, browserHistory , Switch } from 'react-router'
+import { createBrowserHistory} from 'history'
 import ga from 'react-ga'
 
 import './sass/main.scss'
@@ -16,30 +16,37 @@ import PopUp_page from './views/pages/PopUp_page'
 
 import Contact from './views/pages/Contact'
 import ErrorPage from './views/pages/ErrorPage'
-
+import LoginPage from './views/pages/LoginPage'
 import prep_env from './models/prep_env'
+import { AppProvider } from './context/app.context'
+import { UserProfile } from './views/pages/UserProfile'
 
 
 
-let renderSite = function () {
+let renderSite = function (history) {
 	return render((
-		<Router history={browserHistory}>
-			<Route path='/' component={Main}>
-
-				<IndexRoute components={{mainContent: Txt_page}} />
-
-				<Route path='/pg/(:page)' components={{mainContent: Txt_page}} />
-
-				<Route path='/ttt' components={{mainContent: Ttt}} />
-
-				<Route path='/pupg/(:pu_page)' components={{popup: PopUp_page}} />
-
-				<Route path='/contact-us' components={{popup: Contact}} />
-
-				<Route path='/error/404' components={{mainContent: ErrorPage}} />
-				<Route path="*" components={{mainContent: ErrorPage}} />
-			</Route>
-		</Router>
+		<AppProvider>
+<Router history={history}>
+			<Main>
+			  <Switch>
+				
+				<Route path="/pg/:page" component={Txt_page} />
+				<Route path="/user-profile" component={UserProfile} />
+				<Route path="/ttt" component={Ttt} />
+				<Route path="/pupg/:pu_page" component={PopUp_page} />
+				<Route path="/contact-us" component={Contact} />
+				<Route path="/error/404" component={ErrorPage} />
+				<Route path="/login" component={LoginPage} />
+				<Route path="*" component={ErrorPage} />
+				
+			  </Switch>
+			  </Main>
+			</Router>
+		</AppProvider>
+		
+		
+			
+			
 	), document.getElementById('root'))
 }
 
@@ -74,39 +81,40 @@ app.extend({
 
 	},
 
-	start_ga () {
+	start_ga(history) {
 		ga.initialize(app.settings.ws_conf.conf.ga_acc.an, { debug: true });
-		// ga.pageview(location.pathname)
-		const loclisten = browserHistory.listen((location) => {
-			// ga.send('send', location);
-			ga.pageview(location.pathname)
-		})
-	},
 
-	start () {
-		const history = useBasename(createHistory)({
-			// basename: document.getElementsByTagName('base')[0] ? document.getElementsByTagName('base')[0].getAttribute('href') : ''
-			basename: base_dir
-		})
-
-		this.start_ga()
-
-		renderSite()
-	},
-
-	show_page (u) {
-		switch(u) {
-			case 'home':
-				browserHistory.push('/')
-				break
-
-			default:
-				console.log('show_page event with:', u) 
-				browserHistory.push(u)
-				break
+		// Create the history object for BrowserRouter
+		
+	  
+		// Listen for location changes and send pageview to Google Analytics
+		history.listen((location) => {
+		  ga.pageview(location.pathname);
+		});
+	  },
+	
+	  start() {
+		const history = createBrowserHistory();
+		this.start_ga(history);
+		renderSite(history);
+	  },
+	
+	  show_page(u) {
+		switch (u) {
+		  case 'home':
+			browserHistory.push('/');
+			break;
+	
+		  default:
+			console.log('show_page event with:', u);
+			browserHistory.push(u);
+			break;
 		}
-	},
+	  },
+	
+	 
 
+	
 	events: {
 		show_message: 'show_message',
 		show_page: 'show_page'

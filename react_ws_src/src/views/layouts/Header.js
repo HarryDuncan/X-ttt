@@ -1,16 +1,19 @@
-import React, {Component} from 'react'
-import { Link } from 'react-router'
+import React, { useMemo } from 'react'
+import { Link } from 'react-router-dom'
 // import jquery from 'jquery'
 
 import MessageBar from '../layouts/MessageBar'
+import { useAppContext } from '../../context/app.context'
+import { spreadOperator } from '../../helpers/spreadOperator'
 
-export default class Header extends Component {
-
-	constructor (props) {
-		super(props)
-	}
-
-	render () {
+export const Header = () =>  {
+		const {state: {username}} = useAppContext()
+		const navLinks = useMemo(() => app.settings.ws_conf.main_menu.pages.p.map((page) => {
+			if(page.name === 'login' && username !== null){
+				return spreadOperator(page, {name : username, u : 'user-profile'})
+			}
+			return page
+		}), [app.settings, username])
 
 		return (
 			<header id='main_header'>
@@ -29,7 +32,7 @@ export default class Header extends Component {
 						<nav>
 							<ul>
 								{
-									app.settings.ws_conf.main_menu.pages.p.map(function (p, i) {
+									navLinks.map(function (p, i) {
 										return (
 											<li key={i}>
 												<Link 	to={p.u} >
@@ -51,31 +54,5 @@ export default class Header extends Component {
 			</header>
 		)
 	}
-								// <li className='showMobile'>
-								// 	<Link ref='lnkMenu' className='menu no-interfere' to='' onClick={this.showHomeClicked.bind(this)}>menu</Link>
-								// </li>
-/*
-	showPageClicked (e) {
-		e.preventDefault()
-		this.context.router.push(e.target.href)
-		jquery(e.target).toggleClass('active')
-		return false
-	}
+				
 
-	showHomeClicked (e) {
-		e.preventDefault()
-		this.context.router.push('/')
-		jquery(e.target).toggleClass('active')
-		return false
-	}
-*/
-}
-
-// property validation
-Header.propTypes = {
-	children: React.PropTypes.any
-}
-
-Header.contextTypes = {
-	router: React.PropTypes.object.isRequired
-}

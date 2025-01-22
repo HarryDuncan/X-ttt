@@ -36,13 +36,14 @@
 			<p		name="Home"				u="/"					ico="fa fa-home"		/>
 			<p		name="TTT"				u="/ttt"				ico="fa fa-trophy"		/>
 			<p		name="Info"				u="/pg/info"			ico="fa fa-info"		/>
+			<p name='login' u="/login" ico="fa fa-user" />
 		</pages>
 	</main_menu>
 
 <!--	========================	========================	========================	-->
 
 	<header>
-		<head_l_logo	i='images/react_sha.png'		u='/'		/>
+		<head_l_logo	i='static/images/react_sha.png'		u='/'		/>
 		<site_title		txt='X Tic Tac Toe'				u='/'		/>
 	</header>
 

@@ -55,34 +55,84 @@ export default class SetName extends Component {
 //	------------------------	------------------------	------------------------
 //	------------------------	------------------------	------------------------
 
-	sock_start () {
+sock_start() {
+	console.log('test')
+	let retryCount = 0;
+	const maxRetries = 5;
+  
+	// Set initial state to indicate we're attempting to connect
+	this.setState({
+	  game_stat: 'Connecting...'
+	});
+  
+	// Helper function to handle the connection logic
+	const attemptConnection = () => {
+	  this.socket = io(app.settings.ws_conf.loc.SOCKET__io.u);
+  
+	  // Handle connection errors
+	  this.socket.on('connect_error', (error) => {
+		console.error('Connection error:', error);
+		retryCount++;
+  
+		if (retryCount < maxRetries) {
+		  console.log(`Retrying connection... Attempt ${retryCount + 1} of ${maxRetries}`);
+		  this.setState({
+			game_stat: `Connecting... Attempt ${retryCount + 1} of ${maxRetries}`
+		  });
+		  attemptConnection(); 
+		} else {
+		  console.log('Max retries reached. Displaying error message and stopping polling.');
+		  this.socket.disconnect();
+		  this.socket = null;
+		  this.setState({
+			game_stat: 'Error connecting to other players after multiple attempts.'
+		  });
+		}
+	  });
+  
+	  this.socket.on('connect', (data) => {
+		this.socket.emit('new player', { name: app.settings.curr_user.name });
+	  });
+  
+	  this.socket.on('pair_players', (data) => {
+	
+		this.setState({
+		  next_turn_ply: data.mode === 'm',
+		  game_play: true,
+		  game_stat: 'Playing with ' + data.opp.name,
+		});
+	  });
+  
+	  this.socket.on('opp_turn', this.turn_opp_live.bind(this));
+  
+	
+	  this.socket.on('error', (error) => {
+		if (error && error.status === 400) {
+		  this.setState({
+			game_stat: 'Error connecting to other players: Bad Request',
+		  });
+		} else if (error && error.status === 401) {
+		  this.setState({
+			game_stat: 'Error connecting to other players: Unauthorized',
+		  });
+		} else if (error && error.status === 404) {
+		  this.setState({
+			game_stat: 'Error connecting to other players: Not Found',
+		  });
+		} else {
+		  this.setState({
+			game_stat: 'Error connecting to other players',
+		  });
+		}
+	  });
+	};
+  
+	
+		attemptConnection();
 
-		this.socket = io(app.settings.ws_conf.loc.SOCKET__io.u);
 
-		this.socket.on('connect', function(data) { 
-			// console.log('socket connected', data)
-
-			this.socket.emit('new player', { name: app.settings.curr_user.name });
-
-		}.bind(this));
-
-		this.socket.on('pair_players', function(data) { 
-			// console.log('paired with ', data)
-
-			this.setState({
-				next_turn_ply: data.mode=='m',
-				game_play: true,
-				game_stat: 'Playing with ' + data.opp.name
-			})
-
-		}.bind(this));
-
-
-		this.socket.on('opp_turn', this.turn_opp_live.bind(this));
-
-
-
-	}
+  }
+  
 
 //	------------------------	------------------------	------------------------
 //	------------------------	------------------------	------------------------
@@ -334,8 +384,8 @@ export default class SetName extends Component {
 
 	end_game () {
 		this.socket && this.socket.disconnect();
-
-		this.props.onEndGame()
+		const gameInfo = {result : this.state.game_stat}
+		this.props.onEndGame(gameInfo)
 	}
 
 

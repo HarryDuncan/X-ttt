@@ -9,9 +9,12 @@
 	@include font-size(16px);
 
 	.button {
+		margin: 0 1rem;
+    
 		@include button(179px,50px,4px,$colorSecondary,$colorSecondaryDark,#fff);
+		min-width: 179px;
 		font-family: $hdrFont;
-		@include font-size(16px);
+		@include font-size(12px);
 		margin-top:24px;		
 	}
 

@@ -17,6 +17,3 @@ export default class MainContent extends Component {
 	}
 }
 
-MainContent.propTypes = {
-	children: React.PropTypes.any
-}

@@ -226,10 +226,3 @@ export class FieldHolder extends Component {
 		)
 	}
 }
-
-FieldHolder.propTypes = {
-	children: React.PropTypes.any,
-	isValid: React.PropTypes.bool,
-	goodClasses: React.PropTypes.string.isRequired,
-	badClass: React.PropTypes.string.isRequired
-}

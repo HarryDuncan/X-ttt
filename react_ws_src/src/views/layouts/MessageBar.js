@@ -59,5 +59,3 @@ export default class MessageBar extends Component {
 	}
 }
 
-MessageBar.propTypes = {
-}
